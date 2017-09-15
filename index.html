@@ -1,95 +1,61 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html ng-app="wBooksApp">
 <head>
     <meta charset="utf-8">
     <title>wBooks - Demo Page</title>
     <link rel="stylesheet" href="dist/libs/bootstrap.min.css">
     <link rel="stylesheet" href="dist/css/style.css">
 </head>
-<body>
+<body ng-controller="resultsCtrl">
 	<header class="navbar mb-4" style="background-color: #999">
 		<div class="input-group">
-			<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+			<input ng-model="searchTerm" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
 			
 			<span class="input-group-btn">
-				<button class="btn btn-secondary" type="button">Go!</button>
+				<button ng-click="getSearch()" class="btn btn-secondary" type="button">Go!</button>
 			</span>
 		</div>
 	</header>
 
-	<div class="container">
-		<p class="text-center">Você pesquisou por <mark>Into the Wild</mark></p>
+	<div ng-show="bookData" class="container">
+		<img ng-src="{{bookData.volumeInfo.imageLinks.small}}">
+
+		<h1>{{bookData.volumeInfo.title}} <span ng-if="bookData.volumeInfo.subtitle">- {{bookData.volumeInfo.subtitle}}</span></h1>
+
+		<p ng-if="bookData.volumeInfo.authors">{{bookData.volumeInfo.authors.join(', ')}}</p>
+
+		<p ng-if="bookData.volumeInfo.publisher">{{bookData.volumeInfo.publisher}}</p>
+
+		<div ng-if="bookData.volumeInfo.description" ng-bind-html="bookData.volumeInfo.description | htmlFilter"></div>
+
+		<ul>
+			<li ng-if="bookData.volumeInfo.pageCount">Páginas: {{bookData.volumeInfo.pageCount}}</li>
+			<li ng-if="bookData.volumeInfo.language">Idioma: {{bookData.volumeInfo.language}}</li>
+			<li ng-if="bookData.volumeInfo.publishedDate">Ano da Edição: {{bookData.volumeInfo.publishedDate | yearFilter}}</li>
+		</ul>
+
+
+		<i ng-click="bookData=null" class="icon-left-open"></i>
+	</div>
+	<!-- .container -->
+
+	<div ng-if="searched" class="container">
+		<p class="text-center">Você pesquisou por <mark>{{actualSearchTerm}}</mark></p>
 
 		<div class="row">
 
-			<div class="col-12 col-sm-6 mb-4">
-				<section class="card">
-					<img class="card-img-top" src="https://images-americanas.b2w.io/produtos/01/00/item/13987/6/13987609P1.jpg" alt="Card image cap">
+			<div ng-repeat="item in bookResults" class="col-6">
+				<section ng-click="bookInfo(item.id)">
+					<img ng-src="{{item.volumeInfo.imageLinks.thumbnail}}">
 
-					<div class="card-body">
-						<h2 class="card-title">Card title</h2>
+					<h2>{{item.volumeInfo.title}}</h2>
 
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					<p ng-if="item.volumeInfo.authors">{{item.volumeInfo.authors.join(', ')}}</p>
 
-						<a href="#" class="btn btn-primary">Go somewhere</a>
+					<p ng-if="item.volumeInfo.publishedDate">{{item.volumeInfo.publishedDate | yearFilter}}</p>
 
-						<i class="icon-star--empty"></i>
-						<i class="icon-star"></i>
-					</div>
-				</section>
-			</div>
-			<!-- .col-* -->
-
-			<div class="col-12 col-sm-6 mb-4">
-				<section class="card">
-					<img class="card-img-top" src="https://images-americanas.b2w.io/produtos/01/00/item/13987/6/13987609P1.jpg" alt="Card image cap">
-
-					<div class="card-body">
-						<h2 class="card-title">Card title</h2>
-
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-
-						<a href="#" class="btn btn-primary">Go somewhere</a>
-
-						<i class="icon-star--empty"></i>
-						<i class="icon-star"></i>
-					</div>
-				</section>
-			</div>
-			<!-- .col-* -->
-
-			<div class="col-12 col-sm-6 mb-4">
-				<section class="card">
-					<img class="card-img-top" src="https://images-americanas.b2w.io/produtos/01/00/item/13987/6/13987609P1.jpg" alt="Card image cap">
-
-					<div class="card-body">
-						<h2 class="card-title">Card title</h2>
-
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-
-						<a href="#" class="btn btn-primary">Go somewhere</a>
-
-						<i class="icon-star--empty"></i>
-						<i class="icon-star"></i>
-					</div>
-				</section>
-			</div>
-			<!-- .col-* -->
-
-			<div class="col-12 col-sm-6 mb-4">
-				<section class="card">
-					<img class="card-img-top" src="https://images-americanas.b2w.io/produtos/01/00/item/13987/6/13987609P1.jpg" alt="Card image cap">
-
-					<div class="card-body">
-						<h2 class="card-title">Card title</h2>
-
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-
-						<a href="#" class="btn btn-primary">Go somewhere</a>
-
-						<i class="icon-star--empty"></i>
-						<i class="icon-star"></i>
-					</div>
+					<i class="icon-star--empty"></i>
+					<i class="icon-star"></i>
 				</section>
 			</div>
 			<!-- .col-* -->
@@ -97,30 +63,15 @@
 		</div>
 		<!-- .row -->
 
-		<button type="button" class="btn btn-primary">Mais livros</button>
-
-		<nav aria-label="Page navigation example">
-			<ul class="pagination">
-				<li class="page-item active"><a class="page-link" href="#">1</a></li>
-				<li class="page-item"><a class="page-link" href="#">2</a></li>
-				<li class="page-item"><a class="page-link" href="#">3</a></li>
-			</ul>
-		</nav>
+		<button ng-click="getPage()" type="button" class="btn btn-primary">Mais livros</button>
 	</div>
 	<!-- .container -->
 
-	<div class="container">
-		<img src="https://images-americanas.b2w.io/produtos/01/00/item/13987/6/13987609P1.jpg" alt="Card image cap">
-
-		<h1>Title</h1>
-
-		<p>Description</p>
-
-		<i class="icon-left-open"></i>
-	</div>
-	<!-- .container -->
-
+   <script src="https://code.angularjs.org/1.6.5/angular.min.js"></script>
+   <script src="https://code.angularjs.org/1.6.5/angular-resource.min.js"></script>
+   <script src="https://code.angularjs.org/1.6.5/angular-route.min.js"></script>
    <script src="dist/libs/jquery.min.js"></script>
+   <!-- <script src="dist/libs/angular.min.js"></script> -->
    <!-- <script src="dist/libs/bootstrap.min.js"></script> -->
    <script src="dist/js/functions.js"></script>
 </body>

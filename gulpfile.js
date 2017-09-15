@@ -37,7 +37,8 @@ gulp.task('libs', function() {
 	return gulp.src([
 			'node_modules/jquery/dist/jquery.min.js',
 			// 'node_modules/bootstrap/dist/js/bootstrap.min.js',
-			'node_modules/bootstrap/dist/css/bootstrap.min.css'
+			'node_modules/bootstrap/dist/css/bootstrap.min.css',
+			'node_modules/angular/angular.min.js'
 		])
 		.pipe(gulp.dest('dist/libs'));
 });
