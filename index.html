@@ -54,8 +54,7 @@
 
 					<p ng-if="item.volumeInfo.publishedDate">{{item.volumeInfo.publishedDate | yearFilter}}</p>
 
-					<i class="icon-star--empty"></i>
-					<i class="icon-star"></i>
+					<i ng-click="item.markAs(!item.isFavorite)" ng-class="{'icon-star' : item.isFavorite , 'icon-star--empty' : !item.isFavorite}"></i>
 				</section>
 			</div>
 			<!-- .col-* -->
