@@ -1,0 +1,1 @@
+var wBooksApp = angular.module('wBooksApp', ['ngResource','ngRoute']);

@@ -2,11 +2,12 @@
 <html ng-app="wBooksApp">
 <head>
     <meta charset="utf-8">
-    <title>wBooks - Demo Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wBooks</title>
     <link rel="stylesheet" href="dist/libs/bootstrap.min.css">
     <link rel="stylesheet" href="dist/css/style.css">
 </head>
-<body ng-controller="resultsCtrl" class="pb-5">
+<body ng-controller="booksCtrl" class="pb-5">
 	<header class="fixed-top py-3 py-sm-2 bg-primary header">
 		<div class="container">
 			<div class="row">
@@ -16,7 +17,7 @@
 
 				<div class="col-12 col-sm-9 col-md-10">
 					<div class="input-group">
-						<input ng-model="searchTerm" type="text" class="form-control" placeholder="Buscar por..." aria-label="Buscar por...">
+						<input ng-model="typingSearchTerm" type="text" class="form-control" placeholder="Buscar por..." aria-label="Buscar por...">
 						
 						<span class="input-group-btn">
 							<button ng-click="getSearch()" class="btn icon-search header-button" type="button"></button>
@@ -32,27 +33,27 @@
 	</header>
 
 	<div class="container mt-4 mt-sm-5">
-		<div ng-class="{'d-block' : loadDefault}" class="text-center d-none">
+		<div ng-class="{'d-block' : showLoadDefault}" class="text-center d-none">
 			<i class="icon-spin spin"></i>
 		</div>
 
-		<div ng-class="{'d-block' : searchStatus=='itemsFound' && !loadDefault}" class="d-none">
+		<div ng-class="{'d-block' : searchStatus=='itemsFound' && !showLoadDefault}" class="d-none">
 			<small class="d-block mb-3 text-center">Exibindo resultados para a busca: <span class="color-primary">{{actualSearchTerm}}</span></small>
 
-			<section ng-repeat="item in bookResults" class="w-100 mb-4 p-3 box">
+			<section ng-repeat="item in itemsFound" class="w-100 mb-4 p-3 box">
 				<div class="clearfix mb-3">
-					<h2 ng-click="bookInfo(item.id)" class="h5 mb-0 mr-2 c-pointer float-left">
+					<h2 ng-click="getItemData(item.id)" class="h5 mb-0 mr-2 c-pointer float-left">
 						{{item.volumeInfo.title}}
 						<span ng-if="item.volumeInfo.subtitle"> - {{item.volumeInfo.subtitle}}</span>
 					</h2>
 
-					<i ng-click="item.markAs(!item.isFavorite)" ng-class="{'icon-star' : item.isFavorite , 'icon-star--empty' : !item.isFavorite}" class="float-left"></i>
+					<i ng-click="item.statusFavorite(!item.isFavorite)" ng-class="{'icon-star' : item.isFavorite , 'icon-star--empty' : !item.isFavorite}" class="favorite float-left"></i>
 				</div>
 				<!-- .clearfix -->
 
 				<div class="row">
 					<div class="col-4 col-sm-3 col-md-2 col-lg-1">
-						<img ng-click="bookInfo(item.id)" ng-src="{{item.volumeInfo.imageLinks.thumbnail}}" class="mw-100 c-pointer">
+						<img ng-click="getItemData(item.id)" ng-src="{{item.volumeInfo.imageLinks.thumbnail}}" class="mw-100 c-pointer">
 					</div>
 
 					<div class="col-8 col-sm-9 col-md-10 col-lg-11 pl-0">
@@ -72,15 +73,15 @@
 				<!-- .row -->
 			</section>
 
-			<div ng-class="{'d-block' : loadItems}" class="text-center d-none mb-3">
+			<div ng-class="{'d-block' : showLoadPagination}" class="text-center d-none mb-3">
 				<i class="icon-spin spin"></i>
 			</div>
 
-			<button ng-click="getPage()" ng-class="{'d-block' : thereAreMoreBooks}" type="button" class="btn btn-primary bg-primary d-block mx-auto c-pointer d-none">Mais livros</button>
+			<button ng-click="getMoreItems()" ng-class="{'d-block' : thereAreMoreItems}" type="button" class="btn btn-primary bg-primary d-block mx-auto c-pointer d-none">Mais livros</button>
 		</div>
 		<!-- searchStatus=='itemsFound' -->
 
-		<div ng-class="{'d-block' : searchStatus=='404' && !loadDefault}" class="d-none">
+		<div ng-class="{'d-block' : searchStatus=='404' && !showLoadDefault}" class="d-none">
 			<h2 class="h5 mb-3">Nenhum resultado para a busca: <span class="color-primary">{{actualSearchTerm}}</span></h2>
 			
 			<p class="mb-1">Sugestões:</p>
@@ -95,10 +96,10 @@
 	</div>
 	<!-- .container -->
 
-	<div ng-class="{'d-block' : getBookData}" ng-show="bookData" class="pb-5 d-none fullscreen">
+	<div ng-class="{'d-block' : showItemData}" ng-show="itemData" class="pb-5 d-none fullscreen">
 		<div class="py-3 fixed-top fullscreen-header">
 			<div class="container">
-				<span ng-click="getBookData=false" class="color-primary c-pointer">
+				<span ng-click="showItemData=!showItemData" class="color-primary c-pointer">
 					<i class="icon-left mr-2"></i>
 					Voltar
 				</span>
@@ -107,49 +108,50 @@
 		<!-- .fullscreen-header -->
 
 		<div class="container mt-4 mt-sm-5">
-			<div ng-class="{'d-block' : loadBookData}" class="text-center d-none">
+			<div ng-class="{'d-block' : showLoadItemData}" class="text-center d-none">
 				<i class="icon-spin spin"></i>
 			</div>
 
-			<div ng-class="{'d-block' : !loadBookData}" class="d-none">
-				<h1 class="h4">{{bookData.volumeInfo.title}}<span ng-if="bookData.volumeInfo.subtitle"> - {{bookData.volumeInfo.subtitle}}</span></h1>
+			<div ng-class="{'d-block' : !showLoadItemData}" class="d-none">
+				<div class="clearfix">
+					<h1 class="h4 mr-2 float-left">{{itemData.volumeInfo.title}}<span ng-if="itemData.volumeInfo.subtitle"> - {{itemData.volumeInfo.subtitle}}</span></h1>
+
+					<i ng-click="itemData.statusFavorite(!itemData.isFavorite)" ng-class="{'icon-star' : itemData.isFavorite , 'icon-star--empty' : !itemData.isFavorite}" class="favorite float-left"></i>
+				</div>
 
 				<small class="color-grey d-block mb-3">
-					<span ng-if="bookData.volumeInfo.publishedDate">{{bookData.volumeInfo.publishedDate | yearFilter}}</span>
-					<span ng-if="bookData.volumeInfo.publishedDate && bookData.volumeInfo.authors"> - </span>
-					<span ng-if="bookData.volumeInfo.authors">{{bookData.volumeInfo.authors.join(', ')}}</span>
+					<span ng-if="itemData.volumeInfo.publishedDate">{{itemData.volumeInfo.publishedDate | yearFilter}}</span>
+					<span ng-if="itemData.volumeInfo.publishedDate && itemData.volumeInfo.authors"> - </span>
+					<span ng-if="itemData.volumeInfo.authors">{{itemData.volumeInfo.authors.join(', ')}}</span>
 				</small>
 
 				<div class="row">
 					<div class="col-md-4">
-						<img ng-src="{{bookData.volumeInfo.imageLinks.small}}" class="d-block mb-3 mx-auto fullscreen-image">
+						<img ng-src="{{itemData.volumeInfo.imageLinks.small}}" class="d-block mb-3 mx-auto fullscreen-image">
 					</div>
 
 					<div class="col-md-8">
-						<p ng-if="bookData.volumeInfo.description" ng-bind-html="bookData.volumeInfo.description | htmlFilter" class="mb-3"></p>
+						<p ng-if="itemData.volumeInfo.description" ng-bind-html="itemData.volumeInfo.description | htmlFilter" class="mb-3"></p>
 
 						<ul>
-							<li ng-if="bookData.volumeInfo.pageCount">Páginas: {{bookData.volumeInfo.pageCount}}</li>
-							<li ng-if="bookData.volumeInfo.language">Idioma: {{bookData.volumeInfo.language}}</li>
-							<li ng-if="bookData.volumeInfo.publisher">Editora: {{bookData.volumeInfo.publisher}}</li>
+							<li ng-if="itemData.volumeInfo.pageCount">Páginas: {{itemData.volumeInfo.pageCount}}</li>
+							<li ng-if="itemData.volumeInfo.language">Idioma: {{itemData.volumeInfo.language}}</li>
+							<li ng-if="itemData.volumeInfo.publisher">Editora: {{itemData.volumeInfo.publisher}}</li>
 						</ul>
 					</div>
 					<!-- .col-* -->
 				</div>
 				<!-- .row -->
 			</div>
-			<!-- !loadBookData -->
+			<!-- !showLoadItemData -->
 		</div>
 		<!-- .container -->
 	</div>
 	<!-- .fullscreen -->
 
-   <script src="https://code.angularjs.org/1.6.5/angular.min.js"></script>
-   <script src="https://code.angularjs.org/1.6.5/angular-resource.min.js"></script>
-   <script src="https://code.angularjs.org/1.6.5/angular-route.min.js"></script>
-   <script src="dist/libs/jquery.min.js"></script>
-   <!-- <script src="dist/libs/angular.min.js"></script> -->
-   <!-- <script src="dist/libs/bootstrap.min.js"></script> -->
+   <script src="dist/libs/angular.min.js"></script>
+   <script src="dist/libs/angular-resource.min.js"></script>
+   <script src="dist/libs/angular-route.min.js"></script>
    <script src="dist/js/functions.js"></script>
 </body>
 </html>

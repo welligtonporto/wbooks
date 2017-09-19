@@ -1,5 +1,5 @@
 /*!
- * wBooks Demo Page v1.0.0
+ * wBooks v1.0.0
  * Copyright 2017
  * Developed by Welligton Porto (welligtonporto@gmail.com)
  */
@@ -69,18 +69,6 @@ body {
 	background-color: #FFF;
     @include border-radius(.25rem);
     @include box-shadow(2px 2px 4px rgba(0,0,0,.15));
-
-    .icon-star {
-    	color: $color-golden;
-
-    	&--empty {
-    		color: $color-grey-2;
-
-    		&:hover {
-    			color: $color-primary;
-    		}
-    	}
-    }
 }
 
 // Fullscreen
@@ -129,4 +117,19 @@ body {
 	@include animation-duration(.7s);
 	@include animation-iteration-count(infinite);
 	@include animation-timing-function(linear);
+}
+
+// Favorites
+.favorite {
+	&.icon-star {
+		color: $color-golden;
+
+		&--empty {
+			color: $color-grey-2;
+
+			&:hover {
+				color: $color-primary;
+			}
+		}
+	}
 }

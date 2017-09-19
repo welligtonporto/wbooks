@@ -20,7 +20,12 @@ gulp.task('scss', function() {
 
 // Scripts
 gulp.task('scripts', function() {
-	return gulp.src('src/js/**/*.js')
+	return gulp.src([
+			'src/js/app.js',
+			'src/js/controllers.js',
+			'src/js/filters.js',
+			'src/js/services.js'
+		])
 		.pipe(uglify())
 		.pipe(concat('functions.js'))
 		.pipe(gulp.dest('dist/js'));
@@ -35,10 +40,10 @@ gulp.task('icons', function () {
 // Libs
 gulp.task('libs', function() {
 	return gulp.src([
-			'node_modules/jquery/dist/jquery.min.js',
-			// 'node_modules/bootstrap/dist/js/bootstrap.min.js',
 			'node_modules/bootstrap/dist/css/bootstrap.min.css',
-			'node_modules/angular/angular.min.js'
+			'node_modules/angular/angular.min.js',
+			'node_modules/angular-resource/angular-resource.min.js',
+			'node_modules/angular-route/angular-route.min.js'
 		])
 		.pipe(gulp.dest('dist/libs'));
 });
