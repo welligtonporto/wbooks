@@ -4,55 +4,72 @@ var wBooksApp = angular.module('wBooksApp', ['ngResource','ngRoute']);
 // Controllers  
 // wBooksApp.controller('resultsCtrl', ['$scope', function($scope, BookService) {
 wBooksApp.controller('resultsCtrl', ['$scope', '$http', 'FavoriteService', function($scope, $http, FavoriteService) {
-	$scope.searched = false;
+	$scope.wasSearched = false;
+	$scope.invalidSearch = false;
+	$scope.thereAreMoreBooks = false;
+	$scope.loadDefault = false;
+	$scope.loadItems = false;
+	$scope.loadBookData = false;
+	$scope.getBookData = false;
 
     $scope.getSearch = function () {
+    	$scope.loadDefault = true;
     	var searchTerm = $scope.searchTerm.replace(/ /g, '+');
     	var index = 0;
 
     	getJson(searchTerm, index);
 
 		$scope.getPage = function () {
+    		$scope.loadItems = true;
 			totalItems -=  10;
 
 			if (totalItems > 0) {
 				index += 10;
 				getJson(searchTerm, index);
-			} else {
-				// console.log("N falta mais");
 			}
-
 		}
     }
 
     var getJson = function (searchTerm, index) {
     	url = 'https://www.googleapis.com/books/v1/volumes?q='+searchTerm+'&startIndex='+index+'&key=AIzaSyDE0-szZIrViSPNB284ckdUhvp3pyFLPsY';
-    	// console.log(url);
 
 		$http.get(url).
 			then(function(response) {
-				$scope.searched = true;
 				$scope.actualSearchTerm = $scope.searchTerm;
 
+				if(response.data.items) {
+					if (index == 0) { 
+						totalItems = response.data.totalItems;
+						$scope.bookResults = response.data.items;
+						$scope.searchStatus = "itemsFound";
+					} else {
+						$scope.bookResults = $scope.bookResults.concat(response.data.items);
+						$scope.loadItems = false;
+					}
 
-
-				if (index == 0) { 
-					totalItems = response.data.totalItems;
-					$scope.bookResults = response.data.items;
-
-
+					if (totalItems >= 10){
+						$scope.thereAreMoreBooks = true;
+					} else {
+						$scope.thereAreMoreBooks = false;
+					}
+					
+					controlFavorites($scope.bookResults);
 				} else {
-					$scope.bookResults = $scope.bookResults.concat(response.data.items);
+					$scope.searchStatus = "404";
 				}
 				
-				controlFavorites($scope.bookResults);
+				$scope.loadDefault = false;
 			});
     }
 
     $scope.bookInfo = function (idBook) {
+		$scope.getBookData = true;
+		$scope.loadBookData = true;
+    	
     	$http.get('https://www.googleapis.com/books/v1/volumes/'+idBook+'?key=AIzaSyDE0-szZIrViSPNB284ckdUhvp3pyFLPsY').
 			then(function(response) {
 				$scope.bookData = response.data;
+				$scope.loadBookData = false;
 			});
     }
 

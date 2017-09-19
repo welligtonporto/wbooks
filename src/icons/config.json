@@ -20,9 +20,21 @@
     },
     {
       "uid": "d870630ff8f81e6de3958ecaeac532f2",
-      "css": "left-open",
+      "css": "left",
       "code": 59392,
       "src": "fontawesome"
+    },
+    {
+      "uid": "9dd9e835aebe1060ba7190ad2b2ed951",
+      "css": "search",
+      "code": 59395,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "f0c301ac841dafc38d8eb1b933fc73e5",
+      "css": "spin",
+      "code": 59441,
+      "src": "fontelico"
     }
   ]
 }

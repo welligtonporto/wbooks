@@ -10,6 +10,123 @@
 
 @import "_icons";
 
+// Reset
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+// Vars
+$color-primary: #3498db;
+$color-golden: #f1c40f;
+$color-grey: #999;
+$color-grey-2: #ccc;
+$color-bg: #eee;
+
+// Colors
+.bg-primary {
+	background-color: $color-primary !important;
+}
+
+.color-primary {
+	color: $color-primary;
+}
+
+.color-grey {
+	color: $color-grey;
+}
+
+// General
 body {
-	content: "Hello world";
+	background-color: $color-bg;
+	padding-top: 104px;
+
+	@media (min-width: 576px) {
+		padding-top: 54px;
+	}
+}
+
+.c-pointer {
+	cursor: pointer;
+}
+
+// Header
+.header {
+	.form-control {
+		border-color: #FFF;
+	}
+
+	&-button {
+		background-color: #FFF;
+		border-color: #FFF;
+		color: $color-primary;
+		cursor: pointer;
+	}
+}
+
+// Box
+.box {
+	background-color: #FFF;
+    @include border-radius(.25rem);
+    @include box-shadow(2px 2px 4px rgba(0,0,0,.15));
+
+    .icon-star {
+    	color: $color-golden;
+
+    	&--empty {
+    		color: $color-grey-2;
+
+    		&:hover {
+    			color: $color-primary;
+    		}
+    	}
+    }
+}
+
+// Fullscreen
+.fullscreen {
+	z-index: 2000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	padding-top: 57px;
+	overflow-y: auto;
+	background-color: #FFF;
+
+	&-header {
+		border-bottom: 1px solid $color-grey-2;
+		background-color: #FFF;
+	}
+
+	&-image {
+		width: 100%;
+		max-width: 140px;
+
+		@media (min-width: 768px) {
+			max-width: none;
+		}
+	}
+}
+
+// Spin (loader)
+@include keyframes(spin) {
+    to {
+    	@include transform(rotate(0deg));
+    }
+
+    from {
+    	@include transform(rotate(360deg));
+    }
+}
+
+.spin {
+	display: inline-block;
+	font-size: 24px;
+	color: $color-primary;
+	@include animation-name(spin);
+	@include animation-duration(.7s);
+	@include animation-iteration-count(infinite);
+	@include animation-timing-function(linear);
 }
