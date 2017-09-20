@@ -42,7 +42,6 @@ Ele basicamente tem a finalidade de:
 * Controlar os arquivos gerados no Fontello para distribuição do projeto
 * Baixar dependências do projeto e preparar para distrubuição
 
-## Autor
-[Welligton Porto](https://www.linkedin.com/in/welligtonporto/) :)
+**Autor:** [Welligton Porto](https://www.linkedin.com/in/welligtonporto/)
 
 Novas features em breve... :)
